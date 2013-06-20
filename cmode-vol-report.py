@@ -67,7 +67,7 @@ for volattr in vol.children_get():
 for volstateattr in volstateattrs.children_get():
 	volsizeattrs = dict()
 	volsizeattrs = vol.child_get('volume-space-attributes')
-	print 'VServer Name 	 : %s ' % volattrs.child_get_string('owning-verser-name')
+	print 'VServer Name 	 : %s ' % volattrs.child_get_string('owning-vserver-name')
 	print 'Volume Name 	 : %s ' % volattrs.child_get_string('name')
 	print 'Aggregate Name 	 : %s ' % volattrs.child_get_string('containing-aggregate-name')
 	print 'Volume Type	 : %s ' % volattrs.child_get_string('type')
