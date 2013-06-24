@@ -56,17 +56,18 @@ print '\n%s : Volume Report : \n' % filer_name
 
 vollist = dict()
 vollist = out.child_get('attributes-list')
-for vol in vollist.children_get():
-  volattrs = dict()
-	volattrs = vol.child_get('volume-id-attributes')
 
-for volattr in vol.children_get():
+for volattr in vollist.children_get():
 	volstateattrs = dict()
-	volstateattrs = vol.child_get('volume-state-attributes')
+	volstateattrs = volattr.child_get('volume-state-attributes')
 
-for volstateattr in volstateattrs.children_get():
+for volstateattr in vollist.children_get():
 	volsizeattrs = dict()
-	volsizeattrs = vol.child_get('volume-space-attributes')
+	volsizeattrs = volstateattr.child_get('volume-space-attributes')
+
+for vol in vollist.children_get():
+	volattrs = dict()
+	volattrs = vol.child_get('volume-id-attributes')
 	print 'VServer Name 	 : %s ' % volattrs.child_get_string('owning-vserver-name')
 	print 'Volume Name 	 : %s ' % volattrs.child_get_string('name')
 	print 'Aggregate Name 	 : %s ' % volattrs.child_get_string('containing-aggregate-name')
