@@ -1,4 +1,4 @@
-#!/usr/local/python-2.7.2/bin/python
+#!/usr/bin/python
 ##
 #
 # A simple volume report
@@ -11,30 +11,31 @@
 ##
 
 import sys, string, os, getpass
-from math import log
+
+usage = """
+Usage: ./cmode-vol-report.py filername
+e.g ./cmode-vol-report.py cmode-filer.mud.yahoo.com
+
+"""
+
 
 sys.path.append("/var/local/netapp-manageability-sdk-5.1/lib/python/NetApp")
-from NaServer import *
 
-password = getpass.getpass()
+from NaServer import *
+if len(sys.argv)!=2:
+    print (usage)
+    sys.exit(0)
 
 filer_name = sys.argv[1]
 
-## Thanks internet!
-## http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
-unit_list = zip(['bytes', 'kB', 'MB', 'GB', 'TB'], [0, 0, 1, 2, 2])
-def sizeof_fmt(num):
-    """Human friendly file size"""
-    if num > 1:
-        exponent = min(int(log(num, 1024)), len(unit_list) - 1)
-        quotient = float(num) / 1024**exponent
-        unit, num_decimals = unit_list[exponent]
-        format_string = '{:.%sf} {}' % (num_decimals)
-        return format_string.format(quotient, unit)
-    if num == 0:
-        return '0 bytes'
-    if num == 1:
-        return '1 byte'
+password = getpass.getpass()
+
+def readable_size(size):
+    for unit in ['bytes','KB','MB','GB','TB']:
+        if size < 1000.0 and size > -1000.0:
+            return "%3.2f %s" % (size, unit)
+        size /= 1000.0
+    return "%3.2f %s" % (size, 'PB')
 
 filer = NaServer(filer_name,1,6)
 filer.set_admin_user('admin', password)
@@ -73,6 +74,6 @@ for vol in vollist.children_get():
 	print 'Aggregate Name 	 : %s ' % volattrs.child_get_string('containing-aggregate-name')
 	print 'Volume Type	 : %s ' % volattrs.child_get_string('type')
 	print 'Volume State 	 : %s ' % volstateattrs.child_get_string('state')
-	print 'Volume Size	 : %s ' % sizeof_fmt(int(volsizeattrs.child_get_string('size')))
-	print 'Volume Size Avail : %s ' % sizeof_fmt(int(volsizeattrs.child_get_string('size-available')))
+	print 'Volume Size	 : %s ' % readable_size(int(volsizeattrs.child_get_string('size')))
+	print 'Volume Size Avail : %s ' % readable_size(int(volsizeattrs.child_get_string('size-available')))
 	print '---------------------------------'
