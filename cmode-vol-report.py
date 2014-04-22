@@ -40,6 +40,7 @@ def readable_size(size):
 filer = NaServer(filer_name,1,6)
 filer.set_admin_user('admin', password)
 cmd = NaElement('volume-get-iter')
+cmd.child_add_string('max-records', '200')
 
 out = filer.invoke_elem(cmd)
 
